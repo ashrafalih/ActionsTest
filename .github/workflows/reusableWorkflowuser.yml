@@ -22,14 +22,15 @@ jobs:
 
       - name: Set Image Tag Output
         id: set_image_tag_output
-        run: echo "image_name_tag=${{ env.image_tag }}" >> $GITHUB_ENV
+        run: |
+          echo "image_name_tag=${{ env.image_tag }}" >> $GITHUB_ENV
+          echo "::set-output name=image_name_tag::${{ env.image_tag }}"
 
   reuse_job: 
     uses: ashrafalih/ResableWorkflow/.github/workflows/buildandpublish.yml@main
     with:
       image_name: my-test-app
-      image_tag: ${{ needs.build.outputs.set_image_tag_output }}
+      image_tag: ${{ needs.build.outputs.image_name_tag }}
     # secrets:
     #   registry_username: ${{secrets.REGISTRY_USERNAME}}
     #   registry_password: ${{secrets.REGISTRY_PASSWORD}}
-    
