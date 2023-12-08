@@ -2,19 +2,33 @@ name: Reusable workflow user
 on: 
   workflow_dispatch:
 jobs:
-  do-it:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
       - name: Run a one-line script
         run: echo Hello, world!
-    
-  docker: 
+
+      - name: Set Image Tag
+        id: set_image_tag
+        run: echo "image_tag=my_testapp_nov:$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
+      - name: Build and Tag Docker Image
+        id: build_and_tag
+        run: |
+          docker build . --file Dockerfile --tag ${{ env.image_tag }}
+          docker images
+
+      - name: Set Image Tag Output
+        id: set_image_tag_output
+        run: echo "image_name_tag=${{ env.image_tag }}" >> $GITHUB_ENV
+
+  reuse_job: 
     uses: ashrafalih/ResableWorkflow/.github/workflows/buildandpublish.yml@main
     with:
       image_name: my-test-app
-      tag: $GITHUB_RUN_RUNNER
+      image_tag: ${{ needs.build.outputs.set_image_tag_output }}
     # secrets:
     #   registry_username: ${{secrets.REGISTRY_USERNAME}}
     #   registry_password: ${{secrets.REGISTRY_PASSWORD}}
