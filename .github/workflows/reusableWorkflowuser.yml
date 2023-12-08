@@ -15,6 +15,7 @@ jobs:
     with:
       image_name: my-test-app
       tag: $GITHUB_RUN_RUNNER
-    secrets:
-      registry_username: ${{secrets.REGISTRY_USERNAME}}
-      registry_password: ${{secrets.REGISTRY_PASSWORD}}
+    # secrets:
+    #   registry_username: ${{secrets.REGISTRY_USERNAME}}
+    #   registry_password: ${{secrets.REGISTRY_PASSWORD}}
+    
